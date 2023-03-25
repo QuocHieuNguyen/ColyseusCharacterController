@@ -9,10 +9,19 @@ public class PlayerMovement : MonoBehaviour
     private bool _moving;
     [SerializeField]
     private NetworkManager _networkManager;
+
+    [SerializeField] private InputHandler _inputHandler;
+    private CommandHandler _commandHandler;
     private Vector3 _targetPosition;
 
     private async void Start()
     {
+        _commandHandler = new CommandHandler(_inputHandler);
+        _commandHandler.Initialize();
+        _commandHandler.OnSpaceKeyCodePressed += () =>
+        {
+            Debug.Log("Atk");
+        };
         await _networkManager.JoinOrCreateGame();
         _networkManager.GameRoom.OnMessage<string>("welcomeMessage", message =>
         {
@@ -30,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log($"Player {key} has joined the Game!");
         };
+
     }
     private void Update()
     {
