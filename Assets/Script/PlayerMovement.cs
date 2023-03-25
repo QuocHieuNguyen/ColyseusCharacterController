@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("Atk");
         };
+        _commandHandler.OnCommandMovement += OnMovement;
         await _networkManager.JoinOrCreateGame();
         _networkManager.GameRoom.OnMessage<string>("welcomeMessage", message =>
         {
@@ -43,16 +44,6 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Update()
     {
-        // get the horizontal and vertical input axes
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-        if (moveHorizontal != 0 || moveVertical != 0)
-        {
-            // Synchronize mouse click position with the Colyseus server.
-            Vector3 updatedPosition = transform.position+new Vector3(moveHorizontal, transform.position.y, moveVertical);
-            _networkManager.SendPlayerPosition(updatedPosition);
-        }
-
         if (_moving && (Vector3)transform.position != _targetPosition)
         {
             var step = speed * Time.deltaTime;
@@ -62,5 +53,15 @@ public class PlayerMovement : MonoBehaviour
         {
             _moving = false;
         }
+    }
+
+    void OnMovement(Vector3 movement)
+    {
+        if (movement != Vector3.zero)
+        {
+            Vector3 updatedPosition = transform.position+movement;
+            _networkManager.SendPlayerPosition(updatedPosition);
+        }
+
     }
 }

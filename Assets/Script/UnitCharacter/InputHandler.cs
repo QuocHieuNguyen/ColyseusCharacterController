@@ -5,26 +5,29 @@ using UnityEngine;
 
 public class InputHandler : MonoBehaviour
 {
-    private HashSet<KeyCode> registeredKeyCode = new HashSet<KeyCode>();
-    public event Action<KeyCode> OnGetKey; 
+    private HashSet<IReceiveInput> registeredInput = new HashSet<IReceiveInput>();
+    public event Action<ReceivedInputResponse> OnInput; 
     private void Update()
     {
-        foreach (var keyCode in registeredKeyCode)
+        foreach (var receiveInput in registeredInput)
         {
-            if (Input.GetKey(keyCode))
+            if (receiveInput.ValidateInput())
             {
-                OnGetKey?.Invoke(keyCode);
+                OnInput?.Invoke(receiveInput.Response());
             }
         }
     }
 
-    public void RegisterKeyCode(KeyCode keyCode)
+    public void RegisterInput(IReceiveInput receiveInput)
     {
-        registeredKeyCode.Add(keyCode);
+        registeredInput.Add(receiveInput);
     }
 
-    public void UnregisterKeyCode(KeyCode keyCode)
+    public void UnregisterInput(IReceiveInput receiveInput)
     {
-        registeredKeyCode.Remove(keyCode);
+        registeredInput.Remove(receiveInput);
     }
 }
+
+
+
