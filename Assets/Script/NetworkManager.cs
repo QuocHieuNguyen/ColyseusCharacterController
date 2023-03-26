@@ -26,9 +26,6 @@ public class NetworkManager : MonoBehaviour
             GameObject playerInstance = Instantiate(playerPrefab);
             Debug.Log($"key {key} && session id {_room.SessionId}");
             PlayerMovement playerMovement = playerInstance.GetComponent<PlayerMovement>();
-            
-            playerMovement.SetNetworkManager(this);
-            playerMovement.SetInputHandler(_inputHandler);
             if (key == _room.SessionId)
             {
                 ICommandHandler _commandHandler = new NetworkCommandHandler(key, playerInstance, _inputHandler, this);

@@ -7,22 +7,9 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed = 10f;
     private bool _moving;
-    [SerializeField]
-    private NetworkManager _networkManager;
-
-    [SerializeField] private InputHandler _inputHandler;
     private ICommandHandler _commandHandler;
     private Vector3 _targetPosition;
-
-    public void SetNetworkManager(NetworkManager networkManager)
-    {
-        _networkManager = networkManager;
-    }
-    public void SetInputHandler(InputHandler inputHandler)
-    {
-        _inputHandler = inputHandler;
-    }
-
+    
     public void SetCommandHandler(ICommandHandler commandHandler)
     {
         _commandHandler = commandHandler;
