@@ -8,6 +8,7 @@ public class NetworkCommandHandler : ICommandHandler
 {
     private const string HorizontalAxisLabel = "Horizontal";
     private const string VerticalAxisLabel = "Vertical";
+    private string playerSessionID;
     private GameObject target;
     private InputHandler _inputHandler;
     private NetworkManager _networkManager;
@@ -16,8 +17,9 @@ public class NetworkCommandHandler : ICommandHandler
     public event Action<Vector3> OnCommandMovement;
     public event Action OnSpaceKeyCodePressed;
     
-    public NetworkCommandHandler(GameObject target, InputHandler inputHandler, NetworkManager networkManager)
+    public NetworkCommandHandler(string playerSessionID,GameObject target, InputHandler inputHandler, NetworkManager networkManager)
     {
+        this.playerSessionID = playerSessionID;
         this.target = target;
         _inputHandler = inputHandler;
         _networkManager = networkManager;
@@ -35,7 +37,7 @@ public class NetworkCommandHandler : ICommandHandler
 
     private void OnStateChangeHandler(List<DataChange> onChangeEventHandler)
     {
-        var player = _networkManager.GameRoom.State.players[_networkManager.GameRoom.SessionId];
+        var player = _networkManager.GameRoom.State.players[playerSessionID];
         OnCommandMovement?.Invoke(new Vector3(player.x, player.y, player.z));
     }
 

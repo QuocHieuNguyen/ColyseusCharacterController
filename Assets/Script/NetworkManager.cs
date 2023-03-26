@@ -1,3 +1,5 @@
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,9 +13,32 @@ public class NetworkManager : MonoBehaviour
     private static ColyseusClient _client = null;
     private static string HOST_ADDRESS = "ws://localhost:2567";
     private static string GAME_NAME = "my_room";
+    private ICommandHandler _commandHandler;
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private InputHandler _inputHandler;
+    private async void Awake()
+    {
+        await JoinOrCreateGame();
+       
+        GameRoom.State.players.OnAdd += (key, player) =>
+        {
+            Debug.Log($"Player {key} has joined the Game!");
+            GameObject playerInstance = Instantiate(playerPrefab);
+            Debug.Log($"key {key} && session id {_room.SessionId}");
+            PlayerMovement playerMovement = playerInstance.GetComponent<PlayerMovement>();
+            ICommandHandler _commandHandler = new NetworkCommandHandler(key, playerInstance, _inputHandler, this);
+            playerMovement.SetNetworkManager(this);
+            playerMovement.SetInputHandler(_inputHandler);
+            playerMovement.SetCommandHandler(_commandHandler);
+            
+        };
+    }
+
     public void Init()
     {
         _client = new ColyseusClient(HOST_ADDRESS);
+
+        
     }
 
     public async Task JoinOrCreateGame()
@@ -47,5 +72,10 @@ public class NetworkManager : MonoBehaviour
     public void SendPlayerPosition(Vector3 position)
     {
         GameRoom.Send("position", new { x = position.x, y = position.y , z = position.z});
+    }
+
+    private void OnApplicationQuit()
+    {
+        _room.Leave();
     }
 }

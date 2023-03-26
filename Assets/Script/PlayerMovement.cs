@@ -14,28 +14,25 @@ public class PlayerMovement : MonoBehaviour
     private ICommandHandler _commandHandler;
     private Vector3 _targetPosition;
 
-    private async void Start()
+    public void SetNetworkManager(NetworkManager networkManager)
     {
-
-        await _networkManager.JoinOrCreateGame();
-        _networkManager.GameRoom.OnMessage<string>("welcomeMessage", message =>
-        {
-            Debug.Log(message);
-        });
-        _networkManager.GameRoom.State.players.OnAdd += (key, player) =>
-        {
-            Debug.Log($"Player {key} has joined the Game!");
-        };
-        //_commandHandler = new NetworkCommandHandler(gameObject, _inputHandler, _networkManager);
-        _commandHandler = new CommandHandler(gameObject, _inputHandler);
-        _commandHandler.Initialize();
-        _commandHandler.OnSpaceKeyCodePressed += () =>
-        {
-            Debug.Log("Atk");
-        };
-        _commandHandler.OnCommandMovement += OnMovement;
-
+        _networkManager = networkManager;
     }
+    public void SetInputHandler(InputHandler inputHandler)
+    {
+        _inputHandler = inputHandler;
+    }
+
+    public void SetCommandHandler(ICommandHandler commandHandler)
+    {
+        _commandHandler = commandHandler;
+        
+        //_commandHandler = new CommandHandler(gameObject, _inputHandler);
+        _commandHandler.Initialize();
+        _commandHandler.OnSpaceKeyCodePressed += () => { Debug.Log("Atk"); };
+        _commandHandler.OnCommandMovement += OnMovement;
+    }
+
     private void Update()
     {
         if (_moving && (Vector3)transform.position != _targetPosition)
