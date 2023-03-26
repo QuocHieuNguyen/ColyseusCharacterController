@@ -26,10 +26,20 @@ public class NetworkManager : MonoBehaviour
             GameObject playerInstance = Instantiate(playerPrefab);
             Debug.Log($"key {key} && session id {_room.SessionId}");
             PlayerMovement playerMovement = playerInstance.GetComponent<PlayerMovement>();
-            ICommandHandler _commandHandler = new NetworkCommandHandler(key, playerInstance, _inputHandler, this);
+            
             playerMovement.SetNetworkManager(this);
             playerMovement.SetInputHandler(_inputHandler);
-            playerMovement.SetCommandHandler(_commandHandler);
+            if (key == _room.SessionId)
+            {
+                ICommandHandler _commandHandler = new NetworkCommandHandler(key, playerInstance, _inputHandler, this);
+                playerMovement.SetCommandHandler(_commandHandler);
+            }
+            else
+            {
+                ICommandHandler _commandHandler = new NetworkCommandHandlerNonLocal(key, playerInstance, this);
+                playerMovement.SetCommandHandler(_commandHandler);
+            }
+
             
         };
     }
