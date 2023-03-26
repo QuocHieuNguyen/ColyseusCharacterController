@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     private NetworkManager _networkManager;
 
     [SerializeField] private InputHandler _inputHandler;
-    private CommandHandler _commandHandler;
+    private ICommandHandler _commandHandler;
     private Vector3 _targetPosition;
 
     private async void Start()

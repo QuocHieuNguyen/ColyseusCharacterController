@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CommandHandler
+public class CommandHandler : ICommandHandler
 {
     private const string HorizontalAxisLabel = "Horizontal";
     private const string VerticalAxisLabel = "Vertical";
