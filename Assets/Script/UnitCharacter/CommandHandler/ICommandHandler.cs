@@ -10,4 +10,6 @@ public interface ICommandHandler
     event Action<Vector3> OnCommandMovement;
 
     event Action OnSpaceKeyCodePressed;
+
+    void Dispose();
 }

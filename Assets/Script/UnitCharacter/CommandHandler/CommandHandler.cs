@@ -7,13 +7,15 @@ public class CommandHandler : ICommandHandler
 {
     private const string HorizontalAxisLabel = "Horizontal";
     private const string VerticalAxisLabel = "Vertical";
+    private GameObject target;
     private InputHandler _inputHandler;
     private Vector3 movementValue;
     public event Action OnSpaceKeyCodePressed;
 
     public event Action<Vector3> OnCommandMovement; 
-    public CommandHandler(InputHandler inputHandler)
+    public CommandHandler(GameObject target, InputHandler inputHandler)
     {
+        this.target = target;
         _inputHandler = inputHandler;
     }
 
@@ -48,7 +50,7 @@ public class CommandHandler : ICommandHandler
             
             
         }
-        OnCommandMovement?.Invoke(movementValue);
+        OnCommandMovement?.Invoke(target.transform.position + movementValue);
     }
 
     public void Dispose()

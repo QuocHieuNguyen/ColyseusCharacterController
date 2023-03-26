@@ -16,30 +16,24 @@ public class PlayerMovement : MonoBehaviour
 
     private async void Start()
     {
-        _commandHandler = new CommandHandler(_inputHandler);
+
+        await _networkManager.JoinOrCreateGame();
+        _networkManager.GameRoom.OnMessage<string>("welcomeMessage", message =>
+        {
+            Debug.Log(message);
+        });
+        _networkManager.GameRoom.State.players.OnAdd += (key, player) =>
+        {
+            Debug.Log($"Player {key} has joined the Game!");
+        };
+        //_commandHandler = new NetworkCommandHandler(gameObject, _inputHandler, _networkManager);
+        _commandHandler = new CommandHandler(gameObject, _inputHandler);
         _commandHandler.Initialize();
         _commandHandler.OnSpaceKeyCodePressed += () =>
         {
             Debug.Log("Atk");
         };
         _commandHandler.OnCommandMovement += OnMovement;
-        await _networkManager.JoinOrCreateGame();
-        _networkManager.GameRoom.OnMessage<string>("welcomeMessage", message =>
-        {
-            Debug.Log(message);
-        });
-        // Set player's new position after synchronized the mouse click's position with the Colyseus server. 
-        _networkManager.GameRoom.State.OnChange += (changes) =>
-        {
-            var player = _networkManager.GameRoom.State.players[_networkManager.GameRoom.SessionId];
-            Debug.Log($"{player.x} and {player.y} and {player.z}");
-            _targetPosition = new Vector3(player.x, player.y, player.z);
-            _moving = true;
-        };
-        _networkManager.GameRoom.State.players.OnAdd += (key, player) =>
-        {
-            Debug.Log($"Player {key} has joined the Game!");
-        };
 
     }
     private void Update()
@@ -57,11 +51,8 @@ public class PlayerMovement : MonoBehaviour
 
     void OnMovement(Vector3 movement)
     {
-        if (movement != Vector3.zero)
-        {
-            Vector3 updatedPosition = transform.position+movement;
-            _networkManager.SendPlayerPosition(updatedPosition);
-        }
+        _targetPosition = movement;
+        _moving = true;
 
     }
 }
