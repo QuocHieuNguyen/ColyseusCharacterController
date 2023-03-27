@@ -27,54 +27,54 @@ public class NetworkCommandHandler : ICommandHandler
 
     public void Initialize()
     {
-        _inputHandler.OnInput += OnKeyCodePressed;
-        _inputHandler.RegisterInput(new ReceiveSingleKeyCode(KeyCode.Space));
-        _inputHandler.RegisterInput(new ReceiveAxisInput(HorizontalAxisLabel, true));
-        _inputHandler.RegisterInput(new ReceiveAxisInput(VerticalAxisLabel, true));
+        //_inputHandler.OnInput += OnKeyCodePressed;
+        _inputHandler.RegisterInput(new ReceiveSingleKeyCode(KeyCode.Space, OnReceiveSingleKeyCode));
+        _inputHandler.RegisterInput(new ReceiveAxisInput(true,GetAxisInput(HorizontalAxisLabel),  OnReceiveAxisInput));
+        _inputHandler.RegisterInput(new ReceiveAxisInput(true,GetAxisInput(VerticalAxisLabel),  OnReceiveAxisInput));
         
         _networkManager.GameRoom.State.OnChange += OnStateChangeHandler;
     }
 
+    private AxisInput GetAxisInput(string label)
+    {
+        return new AxisInput()
+        {
+            axisLabel = label
+        };
+    }
     private void OnStateChangeHandler(List<DataChange> onChangeEventHandler)
     {
         var player = _networkManager.GameRoom.State.players[playerSessionID];
         OnCommandMovement?.Invoke(new Vector3(player.x, player.y, player.z));
     }
 
-
-    
-    private void OnKeyCodePressed(ReceivedInputResponse receivedInputResponse)
+    private void OnReceiveSingleKeyCode(KeyCode keyCode)
     {
-        if (receivedInputResponse is ReceivedSingleKeyCodeResponse singleKeyCodeResponse )
+        if (keyCode== KeyCode.Space)
         {
-            if (singleKeyCodeResponse.KeyCode == KeyCode.Space)
-            {
-                OnSpaceKeyCodePressed?.Invoke();
-            }
-           
-        }else if (receivedInputResponse is ReceivedAxisResponse receivedAxisResponse)
-        {
+            OnSpaceKeyCodePressed?.Invoke();
+        }
+    }
 
-            if (receivedAxisResponse.ResponseLabel == HorizontalAxisLabel)
-            {
-                movementValue.x = receivedAxisResponse.InputValue;
-            }else if (receivedAxisResponse.ResponseLabel == VerticalAxisLabel)
-            {
-                movementValue.z = receivedAxisResponse.InputValue;
-            }
-            
-            
+    private void OnReceiveAxisInput(AxisInput input)
+    {
+        if (input.axisLabel == HorizontalAxisLabel)
+        {
+            movementValue.x = input.response;
+        }else if (input.axisLabel == VerticalAxisLabel)
+        {
+            movementValue.z = input.response;
         }
         if (movementValue != Vector3.zero)
         {
             Vector3 updatedPosition = target.transform.position + movementValue;
             _networkManager.SendPlayerPosition(updatedPosition);
         }
-
     }
+    
+
     public void Dispose()
     {
-        _inputHandler.OnInput -= OnKeyCodePressed;
         _networkManager.GameRoom.State.OnChange -= OnStateChangeHandler;
     }
 }

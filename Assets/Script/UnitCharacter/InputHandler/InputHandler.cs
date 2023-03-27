@@ -6,14 +6,13 @@ using UnityEngine;
 public class InputHandler : MonoBehaviour
 {
     private HashSet<IReceiveInput> registeredInput = new HashSet<IReceiveInput>();
-    public event Action<ReceivedInputResponse> OnInput; 
     private void Update()
     {
         foreach (var receiveInput in registeredInput)
         {
             if (receiveInput.ValidateInput())
             {
-                OnInput?.Invoke(receiveInput.Response());
+                receiveInput.Execute();
             }
         }
     }

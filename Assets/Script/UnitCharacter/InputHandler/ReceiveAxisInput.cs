@@ -1,31 +1,33 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ReceiveAxisInput : IReceiveInput
+public class ReceiveAxisInput : ReceiveInput<AxisInput>
 {
-    private string axisLabel;
     private bool canBeInterrupted;
-    private ReceivedAxisResponse _response;
 
-    public ReceiveAxisInput(string axisLabel, bool canBeInterrupted)
+    public ReceiveAxisInput(bool canBeInterrupted, AxisInput target, Action<AxisInput> command) : base(target, command)
     {
-        this.axisLabel = axisLabel;
         this.canBeInterrupted = canBeInterrupted;
-        this._response = new ReceivedAxisResponse()
-        {
-            ResponseLabel = axisLabel
-        };
+    }
+    
+    public override bool ValidateInput()
+    {
+        return canBeInterrupted || Input.GetAxis(target.axisLabel) != 0;
     }
 
-    public bool ValidateInput()
+    public override void Execute()
     {
-        return canBeInterrupted || Input.GetAxis(axisLabel) != 0;
+        target.response = Input.GetAxis(target.axisLabel);
+        base.Execute();
     }
 
-    public ReceivedInputResponse Response()
-    {
-        this._response.InputValue = Input.GetAxis(axisLabel);
-        return this._response;
-    }
+
+}
+
+public class AxisInput
+{
+    public string axisLabel;
+    public float response;
 }

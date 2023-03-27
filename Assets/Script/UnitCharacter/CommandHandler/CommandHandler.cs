@@ -21,40 +21,42 @@ public class CommandHandler : ICommandHandler
 
     public void Initialize()
     {
-        _inputHandler.OnInput += OnKeyCodePressed;
-        _inputHandler.RegisterInput(new ReceiveSingleKeyCode(KeyCode.Space));
-        _inputHandler.RegisterInput(new ReceiveAxisInput(HorizontalAxisLabel, true));
-        _inputHandler.RegisterInput(new ReceiveAxisInput(VerticalAxisLabel, true));
+        _inputHandler.RegisterInput(new ReceiveSingleKeyCode(KeyCode.Space, OnReceiveSingleKeyCode));
+        _inputHandler.RegisterInput(new ReceiveAxisInput(true,GetAxisInput(HorizontalAxisLabel),  OnReceiveAxisInput));
+        _inputHandler.RegisterInput(new ReceiveAxisInput(true,GetAxisInput(VerticalAxisLabel),  OnReceiveAxisInput));
 
     }
-
-    private void OnKeyCodePressed(ReceivedInputResponse receivedInputResponse)
+    
+    private AxisInput GetAxisInput(string label)
     {
-        if (receivedInputResponse is ReceivedSingleKeyCodeResponse singleKeyCodeResponse )
+        return new AxisInput()
         {
-            if (singleKeyCodeResponse.KeyCode == KeyCode.Space)
-            {
-                OnSpaceKeyCodePressed?.Invoke();
-            }
-           
-        }else if (receivedInputResponse is ReceivedAxisResponse receivedAxisResponse)
+            axisLabel = label
+        };
+    }
+    private void OnReceiveSingleKeyCode(KeyCode keyCode)
+    {
+        if (keyCode== KeyCode.Space)
         {
+            OnSpaceKeyCodePressed?.Invoke();
+        }
+    }
 
-            if (receivedAxisResponse.ResponseLabel == HorizontalAxisLabel)
-            {
-                movementValue.x = receivedAxisResponse.InputValue;
-            }else if (receivedAxisResponse.ResponseLabel == VerticalAxisLabel)
-            {
-                movementValue.z = receivedAxisResponse.InputValue;
-            }
-            
-            
+    private void OnReceiveAxisInput(AxisInput input)
+    {
+        if (input.axisLabel == HorizontalAxisLabel)
+        {
+            movementValue.x = input.response;
+        }else if (input.axisLabel == VerticalAxisLabel)
+        {
+            movementValue.z = input.response;
         }
         OnCommandMovement?.Invoke(target.transform.position + movementValue);
     }
 
+
     public void Dispose()
     {
-        _inputHandler.OnInput -= OnKeyCodePressed;
+
     }
 }

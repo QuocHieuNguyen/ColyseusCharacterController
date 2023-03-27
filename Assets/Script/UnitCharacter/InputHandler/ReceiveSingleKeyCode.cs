@@ -1,24 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ReceiveSingleKeyCode : IReceiveInput
+public class ReceiveSingleKeyCode : ReceiveInput<KeyCode>
 {
-    private KeyCode _keyCode;
-    private ReceivedSingleKeyCodeResponse _receivedSingleKeyCodeResponse;
-    public ReceiveSingleKeyCode(KeyCode keyCode)
+    public ReceiveSingleKeyCode(KeyCode target, Action<KeyCode> command) : base(target, command)
     {
-        _keyCode = keyCode;
     }
     
-    public bool ValidateInput()
+    public override bool ValidateInput()
     {
-        return Input.GetKey(_keyCode);
+        return Input.GetKey(target);
     }
+    
 
-    public ReceivedInputResponse Response()
-    {
-        _receivedSingleKeyCodeResponse.KeyCode = _keyCode;
-        return _receivedSingleKeyCodeResponse;
-    }
 }

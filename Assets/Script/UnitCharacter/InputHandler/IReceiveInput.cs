@@ -6,5 +6,5 @@ public interface IReceiveInput
 {
     public bool ValidateInput();
 
-    public ReceivedInputResponse Response();
+    public void Execute();
 }
