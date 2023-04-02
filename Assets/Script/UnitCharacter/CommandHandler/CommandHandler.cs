@@ -8,12 +8,12 @@ public class CommandHandler : ICommandHandler
     private const string HorizontalAxisLabel = "Horizontal";
     private const string VerticalAxisLabel = "Vertical";
     private GameObject target;
-    private InputHandler _inputHandler;
+    private IInputHandler _inputHandler;
     private Vector3 movementValue;
     public event Action OnSpaceKeyCodePressed;
 
     public event Action<Vector3> OnCommandMovement; 
-    public CommandHandler(GameObject target, InputHandler inputHandler)
+    public CommandHandler(GameObject target, IInputHandler inputHandler)
     {
         this.target = target;
         _inputHandler = inputHandler;

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputHandler : MonoBehaviour
+public class InputHandler : MonoBehaviour, IInputHandler
 {
     private HashSet<IReceiveInput> registeredInput = new HashSet<IReceiveInput>();
     private void Update()

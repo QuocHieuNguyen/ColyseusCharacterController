@@ -7,18 +7,15 @@ using UnityEngine;
 public class NetworkCommandHandlerNonLocal : ICommandHandler
 {
     private string playerSessionID;
-    private GameObject target;
-    private InputHandler _inputHandler;
     private NetworkManager _networkManager;
     
     private Vector3 movementValue;
     public event Action<Vector3> OnCommandMovement;
     public event Action OnSpaceKeyCodePressed;
     
-    public NetworkCommandHandlerNonLocal(string playerSessionID,GameObject target, NetworkManager networkManager)
+    public NetworkCommandHandlerNonLocal(string playerSessionID, NetworkManager networkManager)
     {
         this.playerSessionID = playerSessionID;
-        this.target = target;
         _networkManager = networkManager;
     }
     public void Initialize()

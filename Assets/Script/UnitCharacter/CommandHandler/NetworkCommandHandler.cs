@@ -10,14 +10,14 @@ public class NetworkCommandHandler : ICommandHandler
     private const string VerticalAxisLabel = "Vertical";
     private string playerSessionID;
     private GameObject target;
-    private InputHandler _inputHandler;
+    private IInputHandler _inputHandler;
     private NetworkManager _networkManager;
     
     private Vector3 movementValue;
     public event Action<Vector3> OnCommandMovement;
     public event Action OnSpaceKeyCodePressed;
     
-    public NetworkCommandHandler(string playerSessionID,GameObject target, InputHandler inputHandler, NetworkManager networkManager)
+    public NetworkCommandHandler(string playerSessionID,GameObject target, IInputHandler inputHandler, NetworkManager networkManager)
     {
         this.playerSessionID = playerSessionID;
         this.target = target;

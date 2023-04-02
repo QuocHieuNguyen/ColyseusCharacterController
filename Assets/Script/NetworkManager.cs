@@ -33,7 +33,7 @@ public class NetworkManager : MonoBehaviour
             }
             else
             {
-                ICommandHandler _commandHandler = new NetworkCommandHandlerNonLocal(key, playerInstance, this);
+                ICommandHandler _commandHandler = new NetworkCommandHandlerNonLocal(key, this);
                 playerMovement.SetCommandHandler(_commandHandler);
             }
 
